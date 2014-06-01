@@ -16,10 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+using System.IO.Pipes;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Web.Caching;
 using log4net;
 using System.Net;
 using System.Reflection;
@@ -40,7 +42,10 @@ namespace uhttpsharp
         private static readonly byte[] CrLfBuffer = Encoding.UTF8.GetBytes(CrLf);
 
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+
+        private readonly IAsyncBlockingQueue<IHttpContext> _requests = new AsyncBlockingQueue<IHttpContext>(10);
+        private readonly IAsyncBlockingQueue<IHttpContext> _responses = new AsyncBlockingQueue<IHttpContext>(10);
+
         private readonly IClient _client;
         private readonly Func<IHttpContext, Task> _requestHandler;
         private readonly IHttpRequestProvider _requestProvider;
@@ -56,24 +61,71 @@ namespace uhttpsharp
             _requestProvider = requestProvider;
 
             _stream = new BufferedStream(_client.Stream);
-            
             Logger.InfoFormat("Got Client {0}", _remoteEndPoint);
 
-            Task.Factory.StartNew(Process);
+            Task.Factory.StartNew(ReadRequests);
+            Task.Factory.StartNew(ProcessRequests);
+            Task.Factory.StartNew(SendResponses);
+
 
             UpdateLastOperationTime();
         }
 
-        private async void Process()
+        private async void SendResponses()
         {
             try
             {
+                while (Client.Connected)
+                {
+                    var item = await _responses.Dequeue().ConfigureAwait(false);
+
+                    if (item.Response == null)
+                    {
+                        Client.Close();
+                        return;
+                    }
+
+                    var streamWriter = new StreamWriter(_stream);
+                    await WriteResponse(item, streamWriter).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                // Hate people who make bad calls.
+                Logger.Warn(string.Format("Error while serving : {0}", _remoteEndPoint), e);
+
+                _client.Close();
+            }
+
+        }
+        private async void ProcessRequests()
+        {
+            try
+            {
+                while (Client.Connected)
+                {
+                    var item = await _requests.Dequeue().ConfigureAwait(false);
+                    await _requestHandler(item).ConfigureAwait(false);
+                    await _responses.Enqueue(item).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                // Hate people who make bad calls.
+                Logger.Warn(string.Format("Error while serving : {0}", _remoteEndPoint), e);
+
+                _client.Close();
+            }
+        }
+
+        private async void ReadRequests()
+        {
+            try
+            {
+                var streamReader = new StreamReader(_stream);
+
                 while (_client.Connected)
                 {
-                    // TODO : Configuration.
-                    var limitedStream = new LimitedStream(_stream, readLimit: 1024*1024, writeLimit: 1024*1024);
-                    var streamReader = new StreamReader(limitedStream);
-                    
                     var request = await _requestProvider.Provide(streamReader).ConfigureAwait(false);
 
                     if (request != null)
@@ -84,19 +136,12 @@ namespace uhttpsharp
 
                         Logger.InfoFormat("{1} : Got request {0}", request.Uri, _client.RemoteEndPoint);
 
-                        await _requestHandler(context).ConfigureAwait(false);
-
-                        if (context.Response != null)
-                        {
-                            var streamWriter = new StreamWriter(limitedStream);
-                            await WriteResponse(context, streamWriter);
-                        }
-
-                        UpdateLastOperationTime();
+                        await _requests.Enqueue(context).ConfigureAwait(false);
                     }
                     else
                     {
                         _client.Close();
+                        return;
                     }
                 }
             }
@@ -109,11 +154,11 @@ namespace uhttpsharp
 
             Logger.InfoFormat("Lost Client {0}", _remoteEndPoint);
         }
-        private async Task WriteResponse(HttpContext context, StreamWriter writer)
+        private async Task WriteResponse(IHttpContext context, StreamWriter writer)
         {
             IHttpResponse response = context.Response;
             IHttpRequest request = context.Request;
-    
+
             // Headers
             await response.WriteHeaders(writer).ConfigureAwait(false);
 
@@ -180,7 +225,7 @@ namespace uhttpsharp
 
             var currentHandler = handlers[index];
             var nextHandler = handlers.Aggregate(index + 1);
-            
+
             return context => currentHandler.Handle(context, () => nextHandler(context));
         }
 

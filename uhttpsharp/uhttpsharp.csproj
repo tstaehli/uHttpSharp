@@ -56,6 +56,8 @@
     <Compile Include="..\AssemblyCommon.cs">
       <Link>Properties\AssemblyCommon.cs</Link>
     </Compile>
+    <Compile Include="AsyncBlockingQueue.cs" />
+    <Compile Include="IAsyncBlockingQueue.cs" />
     <Compile Include="Clients\ClientSslDecoerator.cs" />
     <Compile Include="Clients\IClient.cs" />
     <Compile Include="Handlers\ClassRouter.cs" />

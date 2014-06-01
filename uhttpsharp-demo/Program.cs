@@ -52,10 +52,10 @@ namespace uhttpsharpdemo
 
                 //httpServer.Use(new SessionHandler<DateTime>(() => DateTime.Now));
                 httpServer.Use(new ExceptionHandler());
-                httpServer.Use(new ClassRouter(new MySuperHandler()));
-                httpServer.Use(new TimingHandler());
+                //httpServer.Use(new ClassRouter(new MySuperHandler()));
+                //httpServer.Use(new TimingHandler());
 
-                httpServer.Use(new MyHandler());
+                //httpServer.Use(new MyHandler());
                 httpServer.Use(new HttpRouter().With(string.Empty, new IndexHandler())
                                                .With("about", new AboutHandler())
                                                .With("strings", new RestHandler<string>(new StringsRestController(), JsonResponseProvider.Default)));

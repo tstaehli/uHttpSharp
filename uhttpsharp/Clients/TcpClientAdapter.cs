@@ -7,6 +7,7 @@ namespace uhttpsharp.Clients
     public class TcpClientAdapter : IClient
     {
         private readonly TcpClient _client;
+        private bool _forcedDisconnection;
 
         public TcpClientAdapter(TcpClient client)
         {
@@ -20,12 +21,13 @@ namespace uhttpsharp.Clients
 
         public bool Connected
         {
-            get { return _client.Connected; }
+            get { return _client.Connected && !_forcedDisconnection; }
         }
 
         public void Close()
         {
             _client.Close();
+            _forcedDisconnection = true;
         }
 
 
