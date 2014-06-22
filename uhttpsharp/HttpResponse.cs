@@ -52,7 +52,7 @@ namespace uhttpsharp
         private readonly HttpResponseCode _responseCode;
 
         public HttpResponse(HttpResponseCode code, string content, bool closeConnection)
-            : this(code, "text/html; charset=utf-8", StringToStream(content), closeConnection)
+            : this(code, "text/html; charset=utf-8", StringToStream(content), !closeConnection)
         {
         }
         public HttpResponse(string contentType, Stream contentStream, bool closeConnection)
@@ -85,7 +85,7 @@ namespace uhttpsharp
                 code,
                 string.Format(
                     "<html><head><title>{0}</title></head><body><h1>{0}</h1><hr>{1}</body></html>",
-                    message, body), keepAliveConnection);
+                    message, body), !keepAliveConnection);
         }
         private static MemoryStream StringToStream(string content)
         {

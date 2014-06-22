@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+using System.Globalization;
 using System.Text;
 using log4net;
 using System.Net;
@@ -68,7 +69,7 @@ namespace uhttpsharp
                 {
                     // TODO : Configuration.
                     var limitedStream = new LimitedStream(_stream, readLimit: 1024*1024, writeLimit: 1024*1024);
-                    var streamReader = new StreamReader(limitedStream);
+                    IStreamReader streamReader = new MyStreamReader(limitedStream);
                     
                     var request = await _requestProvider.Provide(streamReader).ConfigureAwait(false);
 
@@ -111,13 +112,16 @@ namespace uhttpsharp
             IHttpRequest request = context.Request;
     
             // Headers
-            await writer.WriteLineAsync(string.Format("HTTP/1.1 {0} {1}",
-                (int)response.ResponseCode,
-                response.ResponseCode));
+            await writer.WriteAsync("HTTP/1.1 ").ConfigureAwait(false);
+            await writer.WriteAsync(((int)response.ResponseCode).ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+            await writer.WriteAsync(' ').ConfigureAwait(false);
+            await writer.WriteLineAsync(response.ResponseCode.ToString()).ConfigureAwait(false);
+
+            //await writer.WriteLineAsync("HTTP/1.1 " + (int)response.ResponseCode + " " + response.ResponseCode);
             
             foreach (var header in response.Headers)
             {
-                await writer.WriteLineAsync(string.Format("{0}: {1}", header.Key, header.Value));
+                await writer.WriteLineAsync(header.Key + ": " + header.Value);
             }
 
             // Cookies

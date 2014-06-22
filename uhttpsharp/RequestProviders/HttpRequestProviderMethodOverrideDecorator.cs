@@ -12,7 +12,7 @@ namespace uhttpsharp.RequestProviders
             _child = child;
         }
 
-        public async Task<IHttpRequest> Provide(StreamReader streamReader)
+        public async Task<IHttpRequest> Provide(IStreamReader streamReader)
         {
             var childValue = await _child.Provide(streamReader).ConfigureAwait(false);
 

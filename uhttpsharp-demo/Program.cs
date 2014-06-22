@@ -52,21 +52,21 @@ namespace uhttpsharpdemo
 
                 //httpServer.Use(new SessionHandler<DateTime>(() => DateTime.Now));
                 httpServer.Use(new ExceptionHandler());
-                httpServer.Use(new ClassRouter(new MySuperHandler()));
-                httpServer.Use(new TimingHandler());
+                //httpServer.Use(new ClassRouter(new MySuperHandler()));
+                //httpServer.Use(new TimingHandler());
 
                 httpServer.Use(new MyHandler());
                 httpServer.Use(new HttpRouter().With(string.Empty, new IndexHandler())
                                                .With("about", new AboutHandler())
                                                .With("strings", new RestHandler<string>(new StringsRestController(), JsonResponseProvider.Default)));
 
-                httpServer.Use(new FileHandler());
-                httpServer.Use(new ErrorHandler());
-                httpServer.Use((context, next) =>
-                {
-                    Console.WriteLine("Got Request!");
-                    return next();
-                });
+                //httpServer.Use(new FileHandler());
+                //httpServer.Use(new ErrorHandler());
+                //httpServer.Use((context, next) =>
+                //{
+                //    Console.WriteLine("Got Request!");
+                //    return next();
+                //});
 
                 httpServer.Start();
                 Console.ReadLine();
@@ -118,10 +118,11 @@ namespace uhttpsharpdemo
 
     internal class MyHandler : IHttpRequestHandler
     {
+        private readonly IHttpResponse _response = uhttpsharp.HttpResponse.CreateWithMessage(HttpResponseCode.Ok, "Hello!", true);
+
         public System.Threading.Tasks.Task Handle(IHttpContext context, Func<System.Threading.Tasks.Task> next)
         {
-            var model = new ModelBinder(new ObjectActivator()).Get<MyModel>(context.Request.QueryString);
-
+            context.Response = _response;
             return Task.Factory.GetCompleted();
         }
     }

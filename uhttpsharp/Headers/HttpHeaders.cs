@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.AccessControl;
+using uhttpsharp.RequestProviders;
 
 namespace uhttpsharp.Headers
 {
@@ -44,15 +45,9 @@ namespace uhttpsharp.Headers
 
     internal class HttpPost : IHttpPost
     {
-        public static async Task<IHttpPost> Create(StreamReader reader, int postContentLength)
+        public static async Task<IHttpPost> Create(IStreamReader reader, int postContentLength)
         {
-            char[] rawEncoded = new char[postContentLength];
-            
-            int readBytes = await reader.ReadAsync(rawEncoded, 0, rawEncoded.Length);
-
-            byte[] raw = Encoding.UTF8.GetBytes(rawEncoded, 0, readBytes);
-            
-            return new HttpPost(raw, readBytes);
+            return new HttpPost(await reader.ReadBytes(postContentLength).ConfigureAwait(false), postContentLength);
         }
 
         private readonly int _readBytes;

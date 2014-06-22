@@ -11,10 +11,10 @@ namespace uhttpsharp.RequestProviders
     {
         private static readonly char[] Separators = { '/' };
 
-        public async Task<IHttpRequest> Provide(StreamReader streamReader)
+        public async Task<IHttpRequest> Provide(IStreamReader streamReader)
         {
             // parse the http request
-            var request = await streamReader.ReadLineAsync().ConfigureAwait(false);
+            var request = await streamReader.ReadLine().ConfigureAwait(false);
 
             if (request == null)
                 return null;
@@ -46,7 +46,7 @@ namespace uhttpsharp.RequestProviders
             // get the headers
             string line;
 
-            while (!string.IsNullOrEmpty((line = await streamReader.ReadLineAsync().ConfigureAwait(false))))
+            while (!string.IsNullOrEmpty((line = await streamReader.ReadLine().ConfigureAwait(false))))
             {
                 string currentLine = line;
 
@@ -54,7 +54,9 @@ namespace uhttpsharp.RequestProviders
                 headersRaw.Add(headerKvp);
             }
 
-            IHttpHeaders headers = new HttpHeaders(headersRaw.ToDictionary(k => k.Key, k => k.Value, StringComparer.InvariantCultureIgnoreCase));
+            
+
+            IHttpHeaders headers = GetHeaders(headersRaw);
             IHttpPost post = await GetPostData(streamReader, headers).ConfigureAwait(false);
 
             string verb;
@@ -65,6 +67,15 @@ namespace uhttpsharp.RequestProviders
             var httpMethod = HttpMethodProvider.Default.Provide(verb);
             return new HttpRequest(headers, httpMethod, httpProtocol, uri,
                 uri.OriginalString.Split(Separators, StringSplitOptions.RemoveEmptyEntries), queryString, post);
+        }
+        private static IHttpHeaders GetHeaders(List<KeyValuePair<string, string>> headersRaw)
+        {
+            if (headersRaw.Count <= 7)
+            {
+                return new ListHttpHeaders(headersRaw);
+            }
+
+            return new HttpHeaders(headersRaw.ToDictionary(k => k.Key, k => k.Value, StringComparer.InvariantCultureIgnoreCase));
         }
         private static IHttpHeaders GetQueryStringData(ref string url)
         {
@@ -82,7 +93,7 @@ namespace uhttpsharp.RequestProviders
             return queryString;
         }
 
-        private static async Task<IHttpPost> GetPostData(StreamReader streamReader, IHttpHeaders headers)
+        private static async Task<IHttpPost> GetPostData(IStreamReader streamReader, IHttpHeaders headers)
         {
             int postContentLength;
             IHttpPost post;
