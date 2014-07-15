@@ -36,7 +36,7 @@ namespace uhttpsharp.RequestProviders
             await _reader.ReadBlockAsync(tempBuffer, 0, count).ConfigureAwait(false);
 
             var retVal = new byte[count];
-            
+
             for (int i = 0; i < tempBuffer.Length; i++)
             {
                 retVal[i] = (byte)tempBuffer[i];
@@ -50,7 +50,7 @@ namespace uhttpsharp.RequestProviders
     {
         private const int BufferSize = 8096 / 4;
         private readonly Stream _underlyingStream;
-        
+
         private readonly byte[] _middleBuffer = new byte[BufferSize];
         private int _index;
         private int _count;
@@ -62,7 +62,12 @@ namespace uhttpsharp.RequestProviders
 
         private async Task ReadBuffer()
         {
-            _count = await _underlyingStream.ReadAsync(_middleBuffer, 0, BufferSize).ConfigureAwait(false);
+            do
+            {
+                _count = await _underlyingStream.ReadAsync(_middleBuffer, 0, BufferSize).ConfigureAwait(false);
+            }
+            while (_count == 0);
+            
             _index = 0;
         }
 
@@ -96,7 +101,7 @@ namespace uhttpsharp.RequestProviders
         {
             var buffer = new byte[count];
             int currentByte = 0;
-            
+
             // Empty the buffer
             int bytesToRead = Math.Min(_count - _index, count) + _index;
             for (int i = _index; i < bytesToRead; i++)
@@ -111,9 +116,9 @@ namespace uhttpsharp.RequestProviders
             {
                 currentByte += await _underlyingStream.ReadAsync(buffer, currentByte, count - currentByte).ConfigureAwait(false);
             }
-            
+
             //Debug.WriteLine("ReadBytes(" + count + ") : " + sw.ElapsedMilliseconds);
-            
+
             return buffer;
         }
     }
