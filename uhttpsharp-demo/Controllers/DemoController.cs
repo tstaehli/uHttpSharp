@@ -54,9 +54,9 @@ namespace uhttpsharpdemo.Controllers
         }
 
         [Indexer]
-        public async Task<object> Get(IHttpContext context, int id)
+        public Task<object> Get(IHttpContext context, int id)
         {
-            return new MyController(id);
+            return Task.FromResult<object>(new MyController(id));
         }
     }
     public class MyRequest : IValidate
@@ -75,7 +75,7 @@ namespace uhttpsharpdemo.Controllers
         [HttpMethod(HttpMethods.Get)]
         public Task<IControllerResponse> Get()
         {
-            return Response.Render(HttpResponseCode.Ok, new {Hello="Base!", Kaki = Enumerable.Range(0, 10000)});
+            return Response.Render(HttpResponseCode.Ok, new { Hello = "Base!", Kaki = Enumerable.Range(0, 10000) });
         }
 
         [HttpMethod(HttpMethods.Post)]
@@ -89,14 +89,16 @@ namespace uhttpsharpdemo.Controllers
             get { return new EmptyPipeline(); }
         }
 
-        public IController Derived {
+        public IController Derived
+        {
             get { return new DerivedController(); }
         }
     }
 
     class DerivedController : BaseController
     {
-        protected new Task<IControllerResponse> Get()
+        [HttpMethod(HttpMethods.Get)]
+        public new Task<IControllerResponse> Get()
         {
             return Response.Render(HttpResponseCode.Ok, new { Hello = "Derived!" });
         }
