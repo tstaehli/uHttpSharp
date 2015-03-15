@@ -23,6 +23,8 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using uhttpsharp.Clients;
 using uhttpsharp.Headers;
@@ -51,7 +53,7 @@ namespace uhttpsharp
             _requestHandler = requestHandler;
             _requestProvider = requestProvider;
 
-            _stream = new BufferedStream(_client.Stream, 8192);
+            _stream = new BufferedStream(_client.Stream, 8096);
             
             Logger.InfoFormat("Got Client {0}", _remoteEndPoint);
 
@@ -67,10 +69,9 @@ namespace uhttpsharp
                 while (_client.Connected)
                 {
                     // TODO : Configuration.
-                    var limitedStream = new NotFlushingStream(new LimitedStream(_stream, readLimit: 1024*1024, writeLimit: 1024*1024));
-                    var streamReader = new StreamReader(limitedStream);
-                    
-                    var request = await _requestProvider.Provide(streamReader).ConfigureAwait(false);
+                    var limitedStream = new NotFlushingStream(new LimitedStream(_stream));
+
+                    var request = await _requestProvider.Provide(new MyStreamReader(limitedStream)).ConfigureAwait(false);
 
                     if (request != null)
                     {
@@ -79,6 +80,7 @@ namespace uhttpsharp
                         var context = new HttpContext(request, _client.RemoteEndPoint);
 
                         Logger.InfoFormat("{1} : Got request {0}", request.Uri, _client.RemoteEndPoint);
+
 
                         await _requestHandler(context).ConfigureAwait(false);
 
