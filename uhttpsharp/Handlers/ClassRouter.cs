@@ -136,7 +136,7 @@ namespace uhttpsharp.Handlers
                             Expression.Constant(parameterType)), parameterType);
 
                 var indexerExpression = Expression.Call (handlerConverted, indexer, httpContext, objectConverted);
-                var returnValue = Expression.Convert (indexerExpression, typeof(T));
+                var returnValue = Expression.Convert (indexerExpression, typeof(Task<T>));
 
                 body = returnValue;
             }
