@@ -2,28 +2,7 @@
 
 A very lightweight & simple embedded http server for c# 
 
-Master | Provider
------- | --------
-[![Build Status][TeamCityImgMaster]][TeamCityLinkMaster] | Windows CI Provided By [JetBrains][] and [CodeBetter][]
-[![Build status](https://ci.appveyor.com/api/projects/status/1schhjbpx7oomrx7)](https://ci.appveyor.com/project/shanielh/uHttpSharp) | Windows CI Provided By [AppVeyor][]
-[![Build Status][MonoImgMaster]][MonoLinkMaster] | Mono CI Provided by [travis-ci][] 
-
-[TeamCityImgMaster]:http://teamcity.codebetter.com/app/rest/builds/buildType:\(id:bt1191\)/statusIcon
-[TeamCityLinkMaster]:http://teamcity.codebetter.com/viewLog.html?buildTypeId=bt1191&buildId=lastFinished&guest=1
-
-[MonoImgMaster]:https://travis-ci.org/Code-Sharp/uHttpSharp.png?branch=master
-[MonoLinkMaster]:https://travis-ci.org/Code-Sharp/uHttpSharp
-
-[travis-ci]:https://travis-ci.org/
-[AppVeyor]:http://www.appveyor.com/
-[JetBrains]:http://www.jetbrains.com/
-[CodeBetter]:http://codebetter.com/
-
 ## Usage
-
-A [NuGet Package](https://www.nuget.org/packages/uHttpSharp/ "Go to µHttpSharp NuGet Package page")  is available, Install via NuGet Package Manager :
-
-	install-package uHttpSharp
 
 A sample for usage : 
 
