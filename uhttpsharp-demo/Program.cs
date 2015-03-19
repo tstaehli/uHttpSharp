@@ -37,8 +37,6 @@ namespace uhttpsharpdemo
     {
         private static void Main()
         {
-            log4net.Config.XmlConfigurator.Configure();
-
             //var serverCertificate = X509Certificate.CreateFromCertFile(@"TempCert.cer");
 
             using (var httpServer = new HttpServer(new HttpRequestProvider()))

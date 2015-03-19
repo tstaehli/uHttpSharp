@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
 using uhttpsharp.Headers;
+using uhttpsharp.Logging;
 
 namespace uhttpsharp.RequestProviders
 {
@@ -14,9 +14,8 @@ namespace uhttpsharp.RequestProviders
     {
         private static readonly char[] Separators = { '/' };
 
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(HttpRequestProvider));
-
-
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        
         public async Task<IHttpRequest> Provide(IStreamReader reader)
         {
             // parse the http request

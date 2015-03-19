@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
 using uhttpsharp.RequestProviders;
+using uhttpsharp.Logging;
 
 namespace uhttpsharp.Headers
 {
