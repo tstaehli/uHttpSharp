@@ -243,8 +243,8 @@ namespace uhttpsharp.Handlers
 
             var foundMethod =
                 (from method in controllerMethod.ControllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                 let attribute = method.GetCustomAttribute<HttpMethodAttribute>()
-                 where attribute != null && attribute.HttpMethod == controllerMethod.Method
+                 let attributes = method.GetCustomAttributes<HttpMethodAttribute>()
+                 where attributes.Any(a => a.HttpMethod == controllerMethod.Method)
                  select method).FirstOrDefault();
 
             if (foundMethod == null)
