@@ -17,7 +17,6 @@
  */
 
 using System.Text;
-using log4net;
 using System.Net;
 using System.Reflection;
 using System;
@@ -29,6 +28,7 @@ using System.Threading.Tasks;
 using uhttpsharp.Clients;
 using uhttpsharp.Headers;
 using uhttpsharp.RequestProviders;
+using uhttpsharp.Logging;
 
 namespace uhttpsharp
 {
@@ -37,7 +37,7 @@ namespace uhttpsharp
         private const string CrLf = "\r\n";
         private static readonly byte[] CrLfBuffer = Encoding.UTF8.GetBytes(CrLf);
 
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         
         private readonly IClient _client;
         private readonly Func<IHttpContext, Task> _requestHandler;
@@ -108,7 +108,7 @@ namespace uhttpsharp
             catch (Exception e)
             {
                 // Hate people who make bad calls.
-                Logger.Warn(string.Format("Error while serving : {0}", _remoteEndPoint), e);
+                Logger.WarnException(string.Format("Error while serving : {0}", _remoteEndPoint), e);
                 _client.Close();
             }
 
