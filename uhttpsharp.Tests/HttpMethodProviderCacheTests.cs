@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
+using NUnit.Framework;
 using Shouldly;
-using Xunit;
 
 namespace uhttpsharp.Tests
 {
@@ -13,7 +13,7 @@ namespace uhttpsharp.Tests
             return new HttpMethodProviderCache(child);
         }
 
-        [Fact]
+        [Test]
         public void Should_Call_Child_With_Right_Parameters()
         {
             // Arrange
@@ -27,7 +27,7 @@ namespace uhttpsharp.Tests
             mock.Received(1).Provide(MethodName);
         }
 
-        [Fact]
+        [Test]
         public void Should_Return_Same_Child_Value()
         {
             // Arrange
@@ -45,7 +45,7 @@ namespace uhttpsharp.Tests
             actual.ShouldBe(expectedMethod);
         }
 
-        [Fact]
+        [Test]
         public void Should_Cache_The_Value()
         {
             // Arrange

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Shouldly;
-using Xunit;
+using NUnit.Framework;
 
 namespace uhttpsharp.Tests
 {
@@ -22,16 +22,16 @@ namespace uhttpsharp.Tests
             }
         }
         
-        [Theory]
-        [InlineData(HttpMethods.Connect)]
-        [InlineData(HttpMethods.Delete)]
-        [InlineData(HttpMethods.Get)]
-        [InlineData(HttpMethods.Head)]
-        [InlineData(HttpMethods.Options)]
-        [InlineData(HttpMethods.Patch)]
-        [InlineData(HttpMethods.Post)]
-        [InlineData(HttpMethods.Put)]
-        [InlineData(HttpMethods.Trace)]
+        [Test]
+        [TestCase(HttpMethods.Connect)]
+        [TestCase(HttpMethods.Delete)]
+        [TestCase(HttpMethods.Get)]
+        [TestCase(HttpMethods.Head)]
+        [TestCase(HttpMethods.Options)]
+        [TestCase(HttpMethods.Patch)]
+        [TestCase(HttpMethods.Post)]
+        [TestCase(HttpMethods.Put)]
+        [TestCase(HttpMethods.Trace)]
         public void Should_Get_Right_Method(HttpMethods method)
         {
             // Arrange
