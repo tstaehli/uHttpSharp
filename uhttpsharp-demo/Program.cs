@@ -45,7 +45,10 @@ namespace uhttpsharpdemo
                 //httpServer.Use(new ListenerSslDecorator(new TcpListenerAdapter(new TcpListener(IPAddress.Loopback, 443)), serverCertificate));
 
                 //httpServer.Use(new SessionHandler<DateTime>(() => DateTime.Now));
+
                 httpServer.Use(new ExceptionHandler());
+                httpServer.Use(new ControllerHandler(new DerivedController(), new ModelBinder(new ObjectActivator()), new JsonView()));
+
                 httpServer.Use(new CompressionHandler(DeflateCompressor.Default, GZipCompressor.Default));
                 httpServer.Use(new ControllerHandler(new BaseController(), new JsonModelBinder(), new JsonView(), StringComparer.OrdinalIgnoreCase));
                 httpServer.Use(new HttpRouter().With(string.Empty, new IndexHandler())

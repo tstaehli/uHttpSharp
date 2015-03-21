@@ -27,9 +27,9 @@ namespace uhttpsharpdemo.Controllers
         }
 
         [HttpMethod(HttpMethods.Post)]
-        public Task<IControllerResponse> Post([FromBody] Question question)
+        public IControllerResponse Post([FromBody] Question question)
         {
-            return Response.Render(HttpResponseCode.Ok, question);
+            return Response.Render(HttpResponseCode.Ok, question).Result;
         }
         public IPipeline Pipeline
         {
@@ -102,5 +102,19 @@ namespace uhttpsharpdemo.Controllers
         {
             return Response.Render(HttpResponseCode.Ok, new { Hello = "Derived!" });
         }
+
+        [Indexer(0)]
+        public Task<IController> Indexer(IHttpContext context, int hey)
+        {
+            return Task.FromResult<IController>(this);
+        }
+
+
+        [Indexer(1)]
+        public Task<IController> Indexer(IHttpContext context, string hey)
+        {
+            return Task.FromResult<IController>(this);
+        } 
+
     }
 }
