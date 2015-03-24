@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using log4net.Config;
 using uhttpsharp;
 using uhttpsharp.Handlers;
 using uhttpsharp.Handlers.Compression;
@@ -37,6 +38,8 @@ namespace uhttpsharpdemo
     {
         private static void Main()
         {
+            XmlConfigurator.Configure();
+
             //var serverCertificate = X509Certificate.CreateFromCertFile(@"TempCert.cer");
 
             using (var httpServer = new HttpServer(new HttpRequestProvider()))
