@@ -14,7 +14,7 @@
 		<copyright>Copyright 2014</copyright>
 		<tags>http server microframeworks</tags>
 		<dependencies>
-			<dependency id="Newtonsoft.Json" version="6.0.8" />
+			<dependency id="Newtonsoft.Json" version="6.0.6" />
 		</dependencies>
 	</metadata>
 	<files>
