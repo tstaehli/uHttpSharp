@@ -71,6 +71,8 @@ namespace uhttpsharp
                     // TODO : Configuration.
                     var limitedStream = new NotFlushingStream(new LimitedStream(_stream));
 
+
+
                     var request = await _requestProvider.Provide(new MyStreamReader(limitedStream)).ConfigureAwait(false);
 
                     if (request != null)
