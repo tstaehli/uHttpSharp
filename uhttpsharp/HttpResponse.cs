@@ -133,15 +133,21 @@ namespace uhttpsharp
             _body = body;
         }
 
-        public static IHttpResponse Create(string body, HttpResponseCode code = HttpResponseCode.Ok, string contentType = "text/html; charset=utf-8", bool keepAlive = true)
+        public static IHttpResponse Create(string body, HttpResponseCode code = HttpResponseCode.Ok, string contentType = "text/html; charset=utf-8", bool keepAlive = true, IHttpHeaders headers = null)
         {
-            return new StringHttpResponse(body, code, new ListHttpHeaders(new[]
+            // TODO : Add Overload
+            if (headers == null)
+            {
+                headers = EmptyHttpHeaders.Empty;
+            }
+
+            return new StringHttpResponse(body, code, new CompositeHttpHeaders(new ListHttpHeaders(new[]
             {
                 new KeyValuePair<string, string>("Date", DateTime.UtcNow.ToString("R")),
                 new KeyValuePair<string, string>("content-type", contentType),
                 new KeyValuePair<string, string>("connection", keepAlive ? "keep-alive" : "close"), 
                 new KeyValuePair<string, string>("content-length", Encoding.UTF8.GetByteCount(body).ToString(CultureInfo.InvariantCulture)), 
-            }));
+            }), headers));
         }
 
         public async override Task WriteBody(StreamWriter writer)

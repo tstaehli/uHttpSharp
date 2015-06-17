@@ -62,6 +62,7 @@
     <Compile Include="Controllers\IErrorContainer.cs" />
     <Compile Include="Controllers\IRequestParameter.cs" />
     <Compile Include="Attributes\NullableAttribute.cs" />
+    <Compile Include="Handlers\BasicAuthenticationHandler.cs" />
     <Compile Include="Handlers\ClassRouter.cs" />
     <Compile Include="Handlers\Compression\CompressionHandler.cs" />
     <Compile Include="Handlers\ControllerHandler.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Handlers\IView.cs" />
     <Compile Include="Handlers\JsonResponseProvider.cs" />
     <Compile Include="Handlers\RestHandler.cs" />
+    <Compile Include="Handlers\SessionHandler.cs" />
     <Compile Include="Headers\CompositeHttpHeaders.cs" />
     <Compile Include="Headers\EmptyHttpHeaders.cs" />
     <Compile Include="Headers\HttpHeaders.cs" />
