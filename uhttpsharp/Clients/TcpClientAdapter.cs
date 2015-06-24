@@ -14,12 +14,15 @@ namespace uhttpsharp.Clients
             _client = client;
             _stream = _client.GetStream();
 
-            // The next lines are commented out because they caused exceptions, And i'm not sure why it has been added in the first place.
+            // The next lines are commented out because they caused exceptions, 
+            // They have been added because .net doesn't allow me to wait for data (ReadAsyncBlock).
+            // Instead, I've added Task.Delay in MyStreamReader.ReadBuffer when
+            // Read returns without data.
+            
             // See https://github.com/Code-Sharp/uHttpSharp/issues/14
             
             // Read Timeout of one second.
             // _stream.ReadTimeout = 1000;
-
         }
 
         public Stream Stream

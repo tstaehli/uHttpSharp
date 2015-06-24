@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,6 +63,12 @@ namespace uhttpsharp.RequestProviders
             do
             {
                 _count = await _underlyingStream.ReadAsync(_middleBuffer, 0, BufferSize).ConfigureAwait(false);
+
+                if (_count == 0)
+                {
+                    // Fix for 100% CPU
+                    await Task.Delay(100).ConfigureAwait(false);
+                }
             }
             while (_count == 0);
 
