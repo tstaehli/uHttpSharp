@@ -48,5 +48,10 @@ namespace uhttpsharp.RequestProviders
         {
             get { return _child.QueryString; }
         }
+
+        public string RawRequestUri
+        {
+            get { return _child.RawRequestUri; }
+        }
     }
 }

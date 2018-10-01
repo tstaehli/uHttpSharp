@@ -42,6 +42,7 @@ namespace uhttpsharp.RequestProviders
             
             var httpProtocol = tokens[2];
 
+            var rawRequestUri = tokens[1];
             var url = tokens[1];
             var queryString = GetQueryStringData(ref url);
             var uri = new Uri(url, UriKind.Relative);
@@ -69,7 +70,7 @@ namespace uhttpsharp.RequestProviders
             }
             var httpMethod = HttpMethodProvider.Default.Provide(verb);
             return new HttpRequest(headers, httpMethod, httpProtocol, uri,
-                uri.OriginalString.Split(Separators, StringSplitOptions.RemoveEmptyEntries), queryString, post);
+                uri.OriginalString.Split(Separators, StringSplitOptions.RemoveEmptyEntries), queryString, post, rawRequestUri);
         }
 
         private static IHttpHeaders GetQueryStringData(ref string url)
