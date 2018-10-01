@@ -25,7 +25,7 @@ namespace uhttpsharp.Headers
                 string value = null;
                 if (splittedKeyValues.Length > i + 1)
                 {
-                    value = Uri.UnescapeDataString(splittedKeyValues[i + 1]).Replace('+', ' ');    
+                    value = Uri.UnescapeDataString(splittedKeyValues[i + 1]);
                 }
                 
                 values[key] = value;
